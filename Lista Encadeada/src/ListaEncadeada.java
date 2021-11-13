@@ -80,7 +80,21 @@ public class ListaEncadeada {
         }
     }
 
-    public void remove(int posicao){}
+    public void remove(int posicao){
+        if(this.totalElementos == 0 || posicao > totalElementos){
+            throw new IllegalArgumentException("Remoção inválida");
+        }else if(posicao == 0){
+            removeDoComeco();
+        }else if(posicao == this.totalElementos){
+            Celula anterior = this.pegaCelula(posicao - 1);
+            anterior.setProx(null);
+            this.ultima = anterior;
+        }else{
+            Celula anterior = this.pegaCelula(posicao - 1);
+            anterior.setProx(this.pegaCelula(posicao).getProx());
+            totalElementos--;
+        }
+    }
     
     public Object pega(int posicao){return this.pegaCelula(posicao).getElemento();}
 

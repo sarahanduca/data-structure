@@ -13,6 +13,20 @@ public class App {
         System.out.println(lista);
         lista.adiciona(2, "Viviane");
         System.out.println(lista);
+        lista.removeDoComeco();
+        System.out.println(lista);
+        lista.remove(0);
+        System.out.println(lista);
+        lista.adicionaNoComeco("José");
+        System.out.println(lista);
+        lista.adiciona(2, "Nina");
+        System.out.println(lista);
+        lista.remove(3);
+        System.out.println(lista);
+        lista.adiciona("Talio");
+        System.out.println(lista);
+
+
 
         Object x = lista.pega(2);
         System.out.println(x);
