@@ -1,17 +1,22 @@
-public class ListaEncadeada {
+public class ListaDuplamenteEncadeada {
     private Celula primeira = null;
     private Celula ultima  = null;
     private int totalElementos = 0;
-    public void adicionaNoComeco(Object elemento){
-        Celula nova = new Celula(elemento, primeira);
-        this.primeira = nova;
 
-        if(this.totalElementos == 0){
-            this.ultima = this.primeira;
-        }
+    public void adicionaNoComeco(Object elemento){
+       if(this.totalElementos == 0){
+           Celula nova = Celula(elemento);
+           this.primeira = nova;
+           this.ultima = nova;
+       }else{
+           Celula nova = Celula(elemento, this.primeira);
+           this.primeira.setAnterior(nova);
+           this.primeira = nova;
+       }
 
         this.totalElementos++;
     }
+
     @Override
     public String toString() {
         if(this.totalElementos == 0){
@@ -29,11 +34,13 @@ public class ListaEncadeada {
 
         return builder.toString();
     }
+
     public void adiciona(Object elemento){
         if(this.totalElementos == 0){
             adicionaNoComeco(elemento);
         }else{
-            Celula nova = new Celula(elemento, null);
+            Celula nova = Celula(elemento);
+            nova.setAnterior(this.ultima);
             this.ultima.setProx(nova);
             this.ultima = nova;
             this.totalElementos++;
@@ -41,7 +48,7 @@ public class ListaEncadeada {
     }
 
     private boolean posicaoOcupada(int posicao){
-       return posicao >= 0 && posicao < this.totalElementos;
+        return posicao >= 0 && posicao < this.totalElementos;
     }
 
     private Celula pegaCelula(int posicao){
@@ -55,15 +62,20 @@ public class ListaEncadeada {
         }
         return atual;
     }
+
     public void adiciona(int posicao, Object elemento){
         if(posicao == 0){
             adicionaNoComeco(elemento);
         }else if(posicao == this.totalElementos){
             adiciona(elemento);
         }else{
-            Celula anterior = this.pegaCelula( posicao - 1 );
-            Celula nova = new Celula(elemento, anterior.getProx());
+            Celula anterior = pegaCelula(posicao).getAnterior();
+            Celula nova = Celula(elemento, anterior.getProx());
+            Celula prox = anterior.getProx();
+            prox.setAnterior(nova);
+            nova.setAnterior(anterior);
             anterior.setProx(nova);
+
             this.totalElementos++;
         }
     }
@@ -84,23 +96,45 @@ public class ListaEncadeada {
         if(this.totalElementos == 0 || posicao > totalElementos){
             throw new IllegalArgumentException("Remoção inválida");
         }else if(posicao == 0){
-            removeDoComeco();
+            this.removeDoComeco();
         }else if(posicao == this.totalElementos){
-            Celula anterior = this.pegaCelula(posicao - 1);
-            anterior.setProx(null);
-            this.ultima = anterior;
+            this.removeDoFim();
         }else{
-            Celula anterior = this.pegaCelula(posicao - 1);
-            anterior.setProx(this.pegaCelula(posicao).getProx());
-            totalElementos--;
+            Celula anterior = pegaCelula(posicao-1);
+            Celula elementoParaRemover = anterior.getProx();
+            Celula prox = elementoParaRemover.getProx();
+            anterior.setProx(prox);
+            prox.setAnterior(anterior);
+
+            this.totalElementos--;
         }
+    }
+
+    public void removeDoFim(){
+        if(this.totalElementos == 1){
+            this.removeDoComeco();
+        }
+        Celula penultimoElemento = this.ultima.getAnterior();
+        penultimoElemento.setProx(null);
+        this.ultima = penultimoElemento;
+        this.totalElementos--;
     }
     
     public Object pega(int posicao){return this.pegaCelula(posicao).getElemento();}
 
     public int tamanho(){ return this.totalElementos;}
 
-    // public boolean contem(Object elemento){
-    //     if(pegaCelula(totalElementos) ==)
-    // }
+    public boolean contem(Object elemento){
+        Celula atual = this.primeira;
+
+        while(atual != null){
+            if(atual.getElemento() == elemento){
+                return true;
+            }
+            atual = atual.getProx();
+        }
+
+        return false;
+    }
+    
 }
